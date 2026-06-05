@@ -1,12 +1,18 @@
-import { Injectable, ForbiddenException } from '@nestjs/common';
+import { Injectable, ForbiddenException, forwardRef, Inject } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { CreateTodoDto } from './dto/create-todo.dto';
 import { UpdateTodoDto } from './dto/update-todo.dto';
 import { SearchTodoDto } from './dto/search-todo.dto';
+import { TodoGateway } from '../gateway/todo.gateway';
+import { CONSTANTS } from '../../constants';
 
 @Injectable()
 export class TodosService {
-  constructor(private prisma: PrismaService) {}
+  constructor(
+    private prisma: PrismaService,
+    @Inject(forwardRef(() => TodoGateway))
+    private gateway: TodoGateway,
+  ) {}
 
   async findAll(query: SearchTodoDto) {
     const title = query.title?.trim();
@@ -24,7 +30,7 @@ export class TodosService {
   }
 
   async create(userId: string, username: string, dto: CreateTodoDto) {
-    return this.prisma.todo.create({
+    const todo = await this.prisma.todo.create({
       data: {
         title: dto.title.trim(),
         description: dto.description.trim(),
@@ -32,25 +38,31 @@ export class TodosService {
         authorId: userId,
       },
     });
+    this.gateway.notifyTodoUpdated('created', todo);
+    return todo;
   }
 
   async update(id: string, userId: string, dto: UpdateTodoDto) {
     const todo = await this.prisma.todo.findUnique({ where: { id } });
     if (todo?.authorId !== userId) throw new ForbiddenException();
     
-    return this.prisma.todo.update({
+    const updatedTodo = await this.prisma.todo.update({
       where: { id },
       data: {
         title: dto.title?.trim(),
         description: dto.description?.trim(),
       },
     });
+    this.gateway.notifyTodoUpdated('updated', updatedTodo);
+    return updatedTodo;
   }
 
   async delete(id: string, userId: string) {
     const todo = await this.prisma.todo.findUnique({ where: { id } });
     if (todo?.authorId !== userId) throw new ForbiddenException();
     
-    return this.prisma.todo.delete({ where: { id } });
+    await this.prisma.todo.delete({ where: { id } });
+    this.gateway.notifyTodoUpdated('deleted', { id });
+    return { success: true };
   }
 }
