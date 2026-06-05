@@ -1,10 +1,23 @@
 import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { CONSTANTS } from './constants';
-import * as cookieParser from 'cookie-parser';
+import { ValidationPipe } from '@nestjs/common';
+import { HttpExceptionFilter } from './filters/http-exception.filter';
+import cookieParser from 'cookie-parser';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
-  await app.listen(process.env.PORT ?? 3000);
+  app.use(cookieParser());
+
+  app.enableCors({         // Важно для фронтенда
+    origin: CONSTANTS.NETWORK.FRONTEND_URL,
+    credentials: true,
+  });
+
+  app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true }));
+
+  app.useGlobalFilters(new HttpExceptionFilter());
+
+  await app.listen(CONSTANTS.NETWORK.PORT);
 }
 bootstrap();

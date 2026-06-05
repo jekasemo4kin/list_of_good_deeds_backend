@@ -1,5 +1,5 @@
 import { Controller, Post, Body, Res, Delete, UseGuards, Req } from '@nestjs/common';
-import { type Response } from 'express';
+import { type Response, type Request } from 'express';
 import { AuthService } from './auth.service';
 import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
@@ -31,7 +31,7 @@ export class AuthController {
   async deleteUser(@Req() req: Request) {
     // В JwtAuthGuard мы записываем payload токена в req.user
     // sub — это id пользователя, который мы передали при подписи токена
-    const userId = (req as any).user.sub;
+    const userId = req.user!.sub;
     return this.authService.deleteUser(userId);
   }
 }

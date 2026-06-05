@@ -18,19 +18,19 @@ export class TodosController {
   @Post()
   @UseGuards(JwtAuthGuard)
   async create(@Req() req: Request, @Body() dto: CreateTodoDto) {
-    const user = (req as any).user;
+    const user = req.user!;
     return this.todosService.create(user.sub, user.username, dto);
   }
 
   @Patch(':id')
   @UseGuards(JwtAuthGuard)
   async update(@Param('id') id: string, @Req() req: Request, @Body() dto: UpdateTodoDto) {
-    return this.todosService.update(id, (req as any).user.sub, dto);
+    return this.todosService.update(id, req.user!.sub, dto);
   }
 
   @Delete(':id')
   @UseGuards(JwtAuthGuard)
   async delete(@Param('id') id: string, @Req() req: Request) {
-    return this.todosService.delete(id, (req as any).user.sub);
+    return this.todosService.delete(id, req.user!.sub);
   }
 }
