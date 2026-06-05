@@ -1,7 +1,7 @@
-import { Request } from 'express';
+import { IUserPayload } from './user.interface';
 
 declare module 'express' {
   interface Request {
-    user?: { sub: string; username: string };
+    user?: IUserPayload;
   }
 }
