@@ -13,6 +13,7 @@ export class RegisterDto {
   @MinLength(1)
   password!: string;
 
+  @ApiProperty({ description: 'Подтверждение пароля' })
   @IsString()
   @IsNotEmpty()
   confirmPassword!: string;
