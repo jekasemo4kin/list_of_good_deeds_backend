@@ -5,16 +5,20 @@ import { RegisterDto } from './dto/register.dto';
 import { LoginDto } from './dto/login.dto';
 import { CONSTANTS } from '../../constants';
 import { JwtAuthGuard } from '../../guards/jwt-auth.guard';
+import { ApiTags, ApiOperation } from '@nestjs/swagger';
 
+@ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}
 
+  @ApiOperation({ summary: 'Регистрация пользователя' })
   @Post('register')
   async register(@Body() dto: RegisterDto) {
     return this.authService.register(dto);
   }
 
+  @ApiOperation({ summary: 'Вход в систему' })
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
     const { token } = await this.authService.login(dto);
@@ -26,6 +30,7 @@ export class AuthController {
     return { message: 'Logged in' };
   }
 
+  @ApiOperation({ summary: 'Удаление профиля' })
   @Delete('profile')
   @UseGuards(JwtAuthGuard)
   async deleteUser(@Req() req: Request) {

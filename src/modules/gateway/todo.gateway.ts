@@ -4,7 +4,7 @@ import { CONSTANTS } from '../../constants';
 
 @WebSocketGateway(Number(CONSTANTS.NETWORK.WS_PORT), {
   cors: {
-    origin: process.env.FRONTEND_URL,
+    origin: CONSTANTS.NETWORK.FRONTEND_URL,
     credentials: true,
   },
 })
@@ -12,7 +12,7 @@ export class TodoGateway {
   @WebSocketServer()
   server!: Server;
 
-  notifyTodoUpdated(type: 'created' | 'updated' | 'deleted', todo: any) {
+  notifyTodoUpdated(type: 'created' | 'updated' | 'deleted', todo: Record<string, any>) {
     this.server.emit(CONSTANTS.WS_EVENTS.TODO_UPDATED, { type, todo });
   }
 
