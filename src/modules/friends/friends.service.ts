@@ -1,4 +1,4 @@
-import { Injectable, ConflictException } from '@nestjs/common';
+import { Injectable, ConflictException, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../../prisma.service';
 import { TodoGateway } from '../gateway/todo.gateway';
 
@@ -20,6 +20,13 @@ export class FriendsService {
   async toggleFriend(followerId: string, followingId: string) {
     if (followerId === followingId) throw new ConflictException('Cannot friend self');
 
+    const targetUser = await this.prisma.user.findUnique({
+      where: { id: followingId },
+      select: { id: true, username: true }
+    });
+
+    if (!targetUser) throw new NotFoundException('User not found');
+
     const existing = await this.prisma.friendship.findUnique({
       where: { followerId_followingId: { followerId, followingId } },
     });
@@ -28,13 +35,15 @@ export class FriendsService {
       await this.prisma.friendship.delete({
         where: { followerId_followingId: { followerId, followingId } },
       });
-      this.gateway.notifyFriendshipUpdated('removed', followerId, followingId);
+
+      this.gateway.notifyFriendshipUpdated('removed', followerId, targetUser);
       return { message: 'Friend removed' };
     } else {
       await this.prisma.friendship.create({
         data: { followerId, followingId },
       });
-      this.gateway.notifyFriendshipUpdated('added', followerId, followingId);
+
+      this.gateway.notifyFriendshipUpdated('added', followerId, targetUser);
       return { message: 'Friend added' };
     }
   }

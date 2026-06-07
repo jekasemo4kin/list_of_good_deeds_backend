@@ -20,7 +20,8 @@ export class TodoGateway {
     this.server.emit(CONSTANTS.WS_EVENTS.USER_DELETED, { userId });
   }
 
-  notifyFriendshipUpdated(type: 'added' | 'removed', followerId: string, followingId: string) {
-    this.server.emit(CONSTANTS.WS_EVENTS.FRIENDSHIP_UPDATED, { type, followerId, followingId });
+
+  notifyFriendshipUpdated(type: 'added' | 'removed', followerId: string, user: { id: string, username: string }) {
+    this.server.emit(CONSTANTS.WS_EVENTS.FRIENDSHIP_UPDATED, { type, followerId, user });
   }
 }
