@@ -39,7 +39,10 @@ export class AuthService {
     }
     
     const token = this.jwtService.sign({ sub: user.id, username: user.username });
-    return { token };
+    return { 
+      token,
+      user: { id: user.id, username: user.username }
+           };
   }
 
   async deleteUser(userId: string) {

@@ -15,17 +15,12 @@ export class TodosService {
   ) {}
 
   async findAll(query: SearchTodoDto) {
-    const title = query.title?.trim();
-    const name = query.name?.trim();
-
     return this.prisma.todo.findMany({
       where: {
-        AND: [
-          title ? { title: { contains: title, mode: 'insensitive' } } : {},
-          name ? { name: { contains: name, mode: 'insensitive' } } : {},
-        ],
+        title: { contains: query.title, mode: 'insensitive' },
+        name: { contains: query.name, mode: 'insensitive' },
       },
-      orderBy: { createdAt: 'desc' },
+      orderBy: { createdAt: 'desc' }
     });
   }
 

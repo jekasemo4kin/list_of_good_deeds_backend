@@ -10,11 +10,11 @@ export class FriendsService {
   ) {}
 
   async getFriends(userId: string) {
-    const following = await this.prisma.friendship.findMany({
+    const friendships = await this.prisma.friendship.findMany({
       where: { followerId: userId },
-      select: { followingId: true },
+      include: { following: { select: { id: true, username: true } } }
     });
-    return following.map(f => f.followingId);
+    return friendships.map(f => f.following);
   }
 
   async toggleFriend(followerId: string, followingId: string) {

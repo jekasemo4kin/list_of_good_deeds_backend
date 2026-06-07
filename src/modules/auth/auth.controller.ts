@@ -34,13 +34,13 @@ export class AuthController {
   @ApiResponse({ status: 200, description: 'Успешная авторизация' })
   @Post('login')
   async login(@Body() dto: LoginDto, @Res({ passthrough: true }) res: Response) {
-    const { token } = await this.authService.login(dto);
+    const { token, user } = await this.authService.login(dto);
     res.cookie(CONSTANTS.JWT.COOKIE_NAME, token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
       sameSite: 'strict',
     });
-    return { message: 'Logged in' };
+    return user;
   }
 
   @ApiOperation({ summary: 'Выход из системы' })
