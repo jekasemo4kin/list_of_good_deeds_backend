@@ -37,8 +37,11 @@ export class AuthController {
     const { token, user } = await this.authService.login(dto);
     res.cookie(CONSTANTS.JWT.COOKIE_NAME, token, {
       httpOnly: true,
-      secure: process.env.NODE_ENV === 'production',
-      sameSite: 'strict',
+      secure: true,              // В продакшене всегда true (для HTTPS)
+      sameSite: 'none',          // Обязательно 'none' для работы с разных доменов
+      path: '/',
+      //secure: process.env.NODE_ENV === 'production', // test
+      //sameSite: 'strict', // test
     });
     return user;
   }

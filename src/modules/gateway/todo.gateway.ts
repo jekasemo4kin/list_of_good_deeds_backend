@@ -2,7 +2,8 @@ import { WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
 import { Server } from 'socket.io';
 import { CONSTANTS } from '../../constants';
 
-@WebSocketGateway(Number(CONSTANTS.NETWORK.WS_PORT), {
+//@WebSocketGateway(Number(CONSTANTS.NETWORK.WS_PORT), { // вот так локально, иначе трабл с сокетом
+@WebSocketGateway({
   cors: {
     origin: CONSTANTS.NETWORK.FRONTEND_URL,
     credentials: true,
