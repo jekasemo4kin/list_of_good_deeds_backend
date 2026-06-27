@@ -1,0 +1,8 @@
+DATABASE_URL="postgresql://postgres:password@localhost:5432/good_deeds?schema=public"
+JWT_SECRET="мой_самый_секретный_ключ"
+PORT=3001
+WS_PORT=3002
+FRONTEND_URL="http://localhost:3000"
+нидтак_DATABASE_URL="postgresql://postgres.rsmqwfdqsfxdubedsohr:"ТУТ_ПАРОЛЬ_БЕЗ_КАВЫЧЕК"@aws-1-eu-central-1.pooler.supabase.com:6543/postgres?pgbouncer=true"
+нидтак_DIRECT_URL="postgresql://postgres.rsmqwfdqsfxdubedsohr:"ТУТ_ПАРОЛЬ_БЕЗ_КАВЫЧЕК"@aws-1-eu-central-1.pooler.supabase.com:5432/postgres"
+нидтак_FRONTEND_URL="https://list-of-good-deeds.vercel.app"
